@@ -1,0 +1,4 @@
+" ~/.dotfiles/vim/vimrc
+
+" Enable line numbers
+set number
