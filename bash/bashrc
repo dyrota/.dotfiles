@@ -1,3 +1,6 @@
 # ~/.dotfiles/bash/bashrc
 
+alias vim="nvim"
+
 export PS1="[master@slave \w]\$ "
+export TERMINAL="alacritty"
