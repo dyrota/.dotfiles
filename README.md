@@ -19,3 +19,5 @@ scripts/omarchy-debloat.sh --dry-run                    # then without --dry-run
 | `bin/` | `captive-portal`: opens Wi-Fi login pages, which Omarchy doesn't detect |
 | `systemd/` | `captive-portal.service`: runs it whenever wlan0 gets an address |
 | `scripts/omarchy-debloat.sh` | Removes unused preinstalls (apps, web apps, their keybindings); re-runnable |
+| `QUATTRO-UPGRADE.md` | Checklist for upgrading to Omarchy 4 without losing any of this |
+| `ghostty/`, `alacritty/`, `terminals/`, `btop/`, `git/`, `opencode/` | Other customized configs |
