@@ -1,0 +1,11 @@
+[Unit]
+Description=Open Wi-Fi login pages (captive portals) automatically
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=%h/.local/bin/captive-portal --watch
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

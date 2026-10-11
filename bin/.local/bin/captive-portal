@@ -1,0 +1,30 @@
+#!/bin/bash
+# Detect a Wi-Fi login page (captive portal) and open it in the browser.
+#   captive-portal          check once; open the login page if the network has one
+#   captive-portal --watch  run forever, checking each time wlan0 gets a new address
+#                           (used by captive-portal.service)
+#
+# Omarchy (iwd + systemd-networkd) has no portal detection, so on networks like a work
+# guest Wi-Fi you'd stay "connected" with no internet and no login page.
+
+CHECK_URL=http://connectivitycheck.gstatic.com/generate_204   # returns 204 when online
+FALLBACK_URL=http://neverssl.com                                # plain HTTP, so the portal can intercept it
+
+check() {
+  local out code redirect
+  out=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 5 "$CHECK_URL") || return 1
+  read -r code redirect <<<"$out"
+  [[ $code == 204 ]] && return 0
+  notify-send -u normal "󰖩    Wi-Fi login required" "Opening the network's sign-in page"
+  omarchy-launch-browser "${redirect:-$FALLBACK_URL}"
+}
+
+if [[ ${1:-} == --watch ]]; then
+  ip -o -4 monitor address dev wlan0 | while read -r line; do
+    [[ $line == Deleted* ]] && continue
+    sleep 3   # let DNS and routes settle
+    check
+  done
+else
+  if check; then echo "Online, no login page needed."; fi
+fi
