@@ -5,7 +5,8 @@ Omarchy (Hyprland) setup for a Framework 16. Each top-level folder mirrors `$HOM
 
 ```bash
 git clone git@github.com:dyrota/.dotfiles.git ~/.dotfiles
-cd ~/.dotfiles && stow hypr waybar uwsm bin systemd   # or copy the files by hand
+omarchy pkg add stow                                   # not installed by default
+cd ~/.dotfiles && stow --adopt hypr waybar uwsm bin systemd && git checkout .   # --adopt + checkout: repo version wins over existing files
 systemctl --user daemon-reload && systemctl --user enable --now captive-portal.service
 scripts/omarchy-debloat.sh --dry-run                    # then without --dry-run
 ```
