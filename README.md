@@ -13,7 +13,7 @@ scripts/omarchy-debloat.sh --dry-run                    # then without --dry-run
 
 | Folder | What |
 |---|---|
-| `hypr/` | Hyprland: monitors (dual MSI by serial, workspaces 1-3 / 4-6), bindings, input, look |
+| `hypr/` | Hyprland: monitors (dual MSI by serial, workspaces 1-5 / 6-10), bindings, input, look |
 | `waybar/` | Top bar; each monitor shows its own workspaces |
 | `uwsm/` | Session env, incl. `AQ_NO_ATOMIC=1` workaround for aquamarine 0.15.0 (remove once fixed) |
 | `bin/` | `captive-portal`: opens Wi-Fi login pages, which Omarchy doesn't detect |

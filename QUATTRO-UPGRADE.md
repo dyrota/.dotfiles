@@ -24,7 +24,7 @@ https://omarchylinux.org/upgrade/3-to-4-quattro/
 | What | 3.x file (in this repo) | Quattro target |
 |---|---|---|
 | Dual MSI monitors by serial, 1080p@60, left/right; laptop 2560x1600@165 x1.6 | `hypr/monitors.conf` | `~/.config/hypr/monitors.lua` (`hl.monitor`) |
-| Workspaces 1-3 left MSI, 4-6 right MSI | `hypr/monitors.conf` | `monitors.lua` / `hyprland.lua` workspace rules |
+| Workspaces 1-5 left MSI, 6-10 right MSI (bar labels 10 as "10") | `hypr/monitors.conf` | `monitors.lua` / `hyprland.lua` workspace rules |
 | Each monitor's bar shows only its workspaces | `waybar/config.jsonc` | `~/.config/omarchy/shell.json` |
 | `AQ_NO_ATOMIC=1` (aquamarine 0.15.0 bug); first test WITHOUT it | `uwsm/env` | keep in uwsm env if still needed |
 | Obsidian launched with `-disable-gpu --enable-wayland-ime` | `hypr/bindings.conf` | `bindings.lua` |
