@@ -1,0 +1,15 @@
+# Changes require a restart to take effect.
+
+# Ensure Omarchy bins are in the path
+export OMARCHY_PATH=$HOME/.local/share/omarchy
+export PATH=$OMARCHY_PATH/bin:$PATH
+
+# Set default terminal and editor
+source ~/.config/uwsm/default
+
+# Activate mise if present on the system
+omarchy-cmd-present mise && eval "$(mise activate bash --shims)"
+
+# Workaround for aquamarine 0.15.0 bug: external monitors stuck at 0x0
+# (every atomic modeset fails with EINVAL). Remove once aquamarine is updated.
+export AQ_NO_ATOMIC=1
