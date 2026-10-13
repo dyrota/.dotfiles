@@ -6,9 +6,19 @@
 #
 # Omarchy (iwd + systemd-networkd) has no portal detection, so on networks like a work
 # guest Wi-Fi you'd stay "connected" with no internet and no login page.
+#
+# On work networks (WORK_SSIDS) it also handles the VPN: the tunnel can't connect before
+# the portal login (and would hide the login page), so it turns the VPN off, opens the
+# login page, waits for the internet to work, then turns the VPN on.
 
 CHECK_URL=http://connectivitycheck.gstatic.com/generate_204   # returns 204 when online
 FALLBACK_URL=http://neverssl.com                                # plain HTTP, so the portal can intercept it
+WORK_SSIDS=(Staff-WLAN Guest-WLAN)
+VPN_UNIT=wg-quick@surfshark.service
+
+online() {
+  [[ $(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$CHECK_URL") == 204 ]]
+}
 
 check() {
   local out code redirect
@@ -19,11 +29,44 @@ check() {
   omarchy-launch-browser "${redirect:-$FALLBACK_URL}"
 }
 
+ssid() {
+  iwctl station wlan0 show | sed -n 's/^ *Connected network *//p' | sed 's/ *$//'
+}
+
+is_work() {
+  local s=$1 w
+  for w in "${WORK_SSIDS[@]}"; do [[ $s == "$w" ]] && return 0; done
+  return 1
+}
+
+work_network() {
+  [[ -f /etc/wireguard/surfshark.conf ]] || { check; return; }   # VPN not set up yet
+  systemctl stop "$VPN_UNIT" 2>/dev/null
+  check
+  for _ in {1..120}; do   # give the login up to 10 minutes
+    online && { systemctl start "$VPN_UNIT" &&
+      notify-send "󰦝    VPN on" "Work Wi-Fi traffic is going through Surfshark"; return; }
+    sleep 5
+  done
+  notify-send -u critical "󰦞    VPN not started" "Work Wi-Fi never came online. Run: vpn on"
+}
+
+handle() {
+  local s; s=$(ssid)
+  if is_work "$s"; then work_network; else check; fi
+}
+
 if [[ ${1:-} == --watch ]]; then
+  handle_key() { echo "$(ssid) $1"; }
+  last=$(handle_key "$(ip -o -4 addr show dev wlan0 | awk '{print $4}')")
+  sleep 3 && handle   # already connected when the service starts
   ip -o -4 monitor address dev wlan0 | while read -r line; do
     [[ $line == Deleted* ]] && continue
     sleep 3   # let DNS and routes settle
-    check
+    key=$(handle_key "$(awk '{print $4}' <<<"$line")")
+    [[ $key == "$last" ]] && continue   # DHCP renewal, same network: leave the VPN alone
+    last=$key
+    handle
   done
 else
   if check; then echo "Online, no login page needed."; fi

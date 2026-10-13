@@ -1,0 +1,22 @@
+#!/bin/bash
+# Surfshark VPN (WireGuard, /etc/wireguard/surfshark.conf) on/off.
+#   vpn on | off | status
+# Installed by scripts/vpn-setup.sh, whose polkit rule lets this run without sudo.
+
+UNIT=wg-quick@surfshark.service
+
+case ${1:-status} in
+  on)
+    systemctl start "$UNIT" && notify-send "󰦝    VPN on" "Traffic is going through Surfshark"
+    ;;
+  off)
+    systemctl stop "$UNIT" && notify-send "󰦞    VPN off" "Traffic is going out directly"
+    ;;
+  status)
+    if systemctl is-active --quiet "$UNIT"; then echo "VPN: on"; else echo "VPN: off"; fi
+    curl -s --max-time 5 https://ipinfo.io/json | grep -E '"(ip|city|org)"' | tr -d ' ",'
+    ;;
+  *)
+    echo "usage: vpn on|off|status" >&2; exit 1
+    ;;
+esac

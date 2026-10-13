@@ -35,6 +35,7 @@ https://omarchylinux.org/upgrade/3-to-4-quattro/
 | Ghostty as default terminal | `terminals/.config/xdg-terminals.list` | check it survived |
 | Captive portal helper | `bin/`, `systemd/` | should keep working (watches wlan0); NetworkManager also detects portals |
 | Wi-Fi networks | (passwords saved above) | `nmcli dev wifi connect <ssid> password <pw>` |
+| Surfshark VPN (WireGuard) + auto-on after work Wi-Fi login | `bin/vpn`, `bin/captive-portal`, `scripts/vpn-setup.sh`; config in `/etc/wireguard/surfshark.conf` (not in repo, survives upgrade) | `ssid()` in captive-portal uses `iwctl`: switch to `nmcli -t -f active,ssid dev wifi \| sed -n "s/^yes://p"`. Or import into NM: `nmcli connection import type wireguard file /etc/wireguard/surfshark.conf` and use NM secondaries |
 
 ## Checks
 
